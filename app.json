@@ -13,6 +13,7 @@
       "bundleIdentifier": "com.anonymous.daily-quote-app"
     },
     "android": {
+      "package": "com.anonymous.dailyquoteapp",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"

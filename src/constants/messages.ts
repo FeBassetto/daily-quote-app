@@ -12,6 +12,26 @@ export const AUTH_MESSAGES = {
 } as const;
 
 export const FORM_PLACEHOLDERS = {
-  EMAIL: "seu@email.com",
+  USERNAME: "Usuário",
   PASSWORD: "••••••••",
+} as const;
+
+export const ERROR_MESSAGES = {
+  INVALID_CREDENTIALS: "Usuário ou senha incorretos",
+  NETWORK_ERROR: "Erro de conexão. Verifique sua internet e tente novamente",
+  GENERIC_ERROR: "Algo deu errado. Tente novamente",
+} as const;
+
+export const SUCCESS_MESSAGES = {
+  LOGIN_SUCCESS: "Login realizado com sucesso!",
+  LOGOUT_SUCCESS: "Até a próxima!",
+  WELCOME: "Bem-vindo!",
+  LOGOUT_TITLE: "Logout realizado",
+} as const;
+
+export const CONFIRMATION_MESSAGES = {
+  LOGOUT_TITLE: "Sair",
+  LOGOUT_MESSAGE: "Tem certeza que deseja sair?",
+  CANCEL: "Cancelar",
+  CONFIRM_LOGOUT: "Sair",
 } as const;

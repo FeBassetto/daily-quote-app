@@ -1,4 +1,3 @@
-import type React from "react";
 import {
   ActivityIndicator,
   Text,
@@ -20,7 +19,7 @@ interface ButtonProps extends TouchableOpacityProps {
   textStyle?: TextStyle;
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export const Button = ({
   title,
   variant = "primary",
   size = "medium",
@@ -30,7 +29,7 @@ export const Button: React.FC<ButtonProps> = ({
   style,
   textStyle,
   ...props
-}) => {
+}: ButtonProps) => {
   const buttonStyle: ViewStyle[] = [styles.base, styles[variant], styles[`${size}Size`]];
   if (fullWidth) buttonStyle.push(styles.fullWidth);
   if (disabled) buttonStyle.push(styles.disabled);

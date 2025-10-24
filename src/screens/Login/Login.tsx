@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { StatusBar } from "expo-status-bar";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react-native";
-import type React from "react";
+import { Eye, EyeOff, Lock, User } from "lucide-react-native";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -15,34 +14,50 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
+import { LoginFooter } from "../../components/LoginFooter/LoginFooter";
 import { Logo } from "../../components/Logo/Logo";
-import { AUTH_MESSAGES, FORM_PLACEHOLDERS } from "../../constants/messages";
+import {
+  AUTH_MESSAGES,
+  ERROR_MESSAGES,
+  FORM_PLACEHOLDERS,
+  SUCCESS_MESSAGES,
+} from "../../constants/messages";
 import { colors } from "../../constants/theme";
-import { type LoginFormData, loginSchema } from "../../utils/validation";
-import { styles } from "./styles";
+import { useAuth } from "../../hooks/useAuth";
+import { authAPI } from "../../services/auth";
+import { showErrorToast, showSuccessToast } from "../../utils/errorHandler";
+import { type LoginFormData, loginSchema } from "../../utils/loginValidation";
+import { styles } from "./styles.login";
 
-export const LoginScreen: React.FC = () => {
-  const [loading, setLoading] = useState(false);
+export const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const { signIn } = useAuth();
 
-  const { control, handleSubmit } = useForm<LoginFormData>({
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     mode: "onBlur",
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    setLoading(true);
     try {
-      console.log("Login data:", data);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-    } catch (error) {
-      console.error("Login error:", error);
-    } finally {
-      setLoading(false);
+      const response = await authAPI.login(data);
+
+      if (response.token) {
+        await signIn(response.token);
+        showSuccessToast(SUCCESS_MESSAGES.LOGIN_SUCCESS, SUCCESS_MESSAGES.WELCOME);
+      } else {
+        showErrorToast(ERROR_MESSAGES.INVALID_CREDENTIALS, "Erro no Login");
+      }
+    } catch {
+      showErrorToast(ERROR_MESSAGES.NETWORK_ERROR, "Erro no Login");
     }
   };
 
@@ -67,19 +82,19 @@ export const LoginScreen: React.FC = () => {
           <View style={styles.form}>
             <Controller
               control={control}
-              name="email"
+              name="username"
               render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
                 <Input
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
                   error={error?.message}
-                  placeholder={FORM_PLACEHOLDERS.EMAIL}
-                  keyboardType="email-address"
+                  placeholder={FORM_PLACEHOLDERS.USERNAME}
                   autoCapitalize="none"
-                  autoComplete="email"
-                  textContentType="emailAddress"
-                  leftIcon={<Mail size={20} color={colors.text.tertiary} />}
+                  autoComplete="username"
+                  textContentType="username"
+                  leftIcon={<User size={20} color={colors.text.tertiary} />}
+                  editable={!isSubmitting}
                 />
               )}
             />
@@ -103,6 +118,7 @@ export const LoginScreen: React.FC = () => {
                     <TouchableOpacity
                       onPress={() => setShowPassword(!showPassword)}
                       activeOpacity={0.7}
+                      disabled={isSubmitting}
                     >
                       {showPassword ? (
                         <EyeOff size={20} color={colors.text.tertiary} />
@@ -112,6 +128,7 @@ export const LoginScreen: React.FC = () => {
                     </TouchableOpacity>
                   }
                   containerStyle={styles.passwordInput}
+                  editable={!isSubmitting}
                 />
               )}
             />
@@ -123,7 +140,8 @@ export const LoginScreen: React.FC = () => {
             <Button
               title={AUTH_MESSAGES.LOGIN_BUTTON}
               onPress={handleSubmit(onSubmit)}
-              loading={loading}
+              loading={isSubmitting}
+              disabled={isSubmitting}
               fullWidth
               size="large"
               style={styles.loginButton}
@@ -138,18 +156,7 @@ export const LoginScreen: React.FC = () => {
             <Button title={AUTH_MESSAGES.CREATE_ACCOUNT} variant="outline" fullWidth size="large" />
           </View>
 
-          <View style={styles.footer}>
-            <View style={styles.footerTextContainer}>
-              <Text style={styles.footerText}>{AUTH_MESSAGES.TERMS_PREFIX} </Text>
-              <TouchableOpacity activeOpacity={0.7} onPress={() => {}}>
-                <Text style={styles.footerLink}>{AUTH_MESSAGES.TERMS_LINK}</Text>
-              </TouchableOpacity>
-              <Text style={styles.footerText}> {AUTH_MESSAGES.TERMS_AND} </Text>
-              <TouchableOpacity activeOpacity={0.7} onPress={() => {}}>
-                <Text style={styles.footerLink}>{AUTH_MESSAGES.PRIVACY_LINK}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          <LoginFooter />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

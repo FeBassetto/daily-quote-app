@@ -1,4 +1,3 @@
-import type React from "react";
 import type { ViewStyle } from "react-native";
 import LogoSvg from "../../assets/images/logo.svg";
 
@@ -13,7 +12,7 @@ const sizeMap = {
   large: { width: 160, height: 37 },
 } as const;
 
-export const Logo: React.FC<LogoProps> = ({ size = "medium", style }) => {
+export const Logo = ({ size = "medium", style }: LogoProps) => {
   const { width, height } = sizeMap[size];
 
   return <LogoSvg width={width} height={height} style={style} />;

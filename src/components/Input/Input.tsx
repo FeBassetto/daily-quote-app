@@ -1,5 +1,4 @@
-import type React from "react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import {
   Text,
   TextInput,
@@ -14,25 +13,27 @@ import { styles } from "./styles.input";
 interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
   containerStyle?: ViewStyle;
 }
 
-export const Input: React.FC<InputProps> = ({
+export const Input = ({
   label,
   error,
   leftIcon,
   rightIcon,
   containerStyle,
   style,
+  editable = true,
   ...props
-}) => {
+}: InputProps) => {
   const [isFocused, setIsFocused] = useState(false);
 
   const inputStyles: TextStyle[] = [styles.input];
   if (leftIcon) inputStyles.push(styles.inputWithLeftIcon);
   if (rightIcon) inputStyles.push(styles.inputWithRightIcon);
+  if (!editable) inputStyles.push(styles.inputDisabled);
   if (style) inputStyles.push(style as TextStyle);
 
   return (
@@ -44,6 +45,7 @@ export const Input: React.FC<InputProps> = ({
           styles.inputContainer,
           isFocused && styles.inputContainerFocused,
           error && styles.inputContainerError,
+          !editable && styles.inputContainerDisabled,
         ]}
       >
         {leftIcon && <View style={styles.leftIcon}>{leftIcon}</View>}
@@ -53,6 +55,7 @@ export const Input: React.FC<InputProps> = ({
           placeholderTextColor={colors.text.tertiary}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          editable={editable}
           {...props}
         />
 

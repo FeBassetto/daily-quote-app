@@ -1,19 +1,14 @@
 import { z } from "zod";
 
-export const emailSchema = z
-  .string()
-  .min(1, "Email é obrigatório")
-  .email("Email inválido")
-  .toLowerCase()
-  .trim();
+const usernameSchema = z.string().min(1, "Usuário é obrigatório").trim();
 
-export const passwordSchema = z
+const passwordSchema = z
   .string()
   .min(1, "Senha é obrigatória")
   .min(6, "Senha deve ter no mínimo 6 caracteres");
 
 export const loginSchema = z.object({
-  email: emailSchema,
+  username: usernameSchema,
   password: passwordSchema,
 });
 

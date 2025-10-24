@@ -55,4 +55,12 @@ export const styles = StyleSheet.create({
     marginTop: spacing.xs,
     marginLeft: spacing.xs,
   },
+  inputContainerDisabled: {
+    backgroundColor: colors.border.light,
+    borderColor: colors.border.medium,
+    opacity: 0.8,
+  },
+  inputDisabled: {
+    color: colors.text.tertiary,
+  },
 });
